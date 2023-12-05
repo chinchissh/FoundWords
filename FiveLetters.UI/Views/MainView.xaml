@@ -1,0 +1,261 @@
+﻿<hc:Window
+    x:Class="FiveLetters.UI.Views.MainView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:FiveLetters.UI.Controls"
+    xmlns:converters="clr-namespace:FiveLetters.UI.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:FiveLetters.UI.Models"
+    xmlns:system="clr-namespace:System;assembly=netstandard"
+    Title="Игра в слова"
+    Width="550"
+    Height="600"
+    Icon="{StaticResource IconImage}"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="\Resources\LabelStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <hc:Window.InputBindings>
+        <KeyBinding Key="Backspace" Command="{Binding RemoveClickedCoommand}" />
+        <KeyBinding Key="Return" Command="{Binding EnterClickedCommand}" />
+    </hc:Window.InputBindings>
+
+    <hc:Interaction.Triggers>
+        <hc:EventTrigger EventName="Loaded">
+            <hc:InvokeCommandAction Command="{Binding LoadViewDataCommand}" />
+        </hc:EventTrigger>
+    </hc:Interaction.Triggers>
+
+    <Grid Margin="10">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100" />
+            <RowDefinition />
+            <RowDefinition Height="120" />
+        </Grid.RowDefinitions>
+
+        <Border
+            Grid.RowSpan="3"
+            Panel.ZIndex="10"
+            d:Visibility="Hidden"
+            Background="#66000000"
+            CornerRadius="10"
+            Visibility="{Binding Path=IsUploading, Converter={dxmvvm:BooleanToVisibilityConverter}}">
+            <hc:LoadingIndicator Style="{StaticResource LoadingIndicatorArcsStyle}" />
+        </Border>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel
+                Grid.Column="0"
+                Margin="10"
+                Orientation="Horizontal">
+                <StackPanel.Resources>
+                    <Style BasedOn="{StaticResource GuessedLabelStyle}" TargetType="Label" />
+                </StackPanel.Resources>
+
+                <Label Content="{Binding Settings.LettersCount, FallbackValue=5}" />
+                <Label Content="Б" />
+                <Label Content="У" />
+                <Label Content="К" />
+                <Label Content="В" />
+            </StackPanel>
+
+            <StackPanel
+                Grid.Column="1"
+                Margin="10"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <StackPanel.Resources>
+                    <Style BasedOn="{StaticResource {x:Type Label}}" TargetType="Label">
+                        <Setter Property="Margin" Value="3" />
+                        <Setter Property="FontWeight" Value="DemiBold" />
+                        <Setter Property="FontFamily" Value="Bahnschrift" />
+                        <Setter Property="FontSize" Value="18" />
+                        <Setter Property="Width" Value="35" />
+                        <Setter Property="Foreground" Value="WhiteSmoke" />
+                        <Setter Property="Height" Value="35" />
+                        <Setter Property="Padding" Value="0,3,0,0" />
+                    </Style>
+                </StackPanel.Resources>
+
+                <Label
+                    d:Content="5"
+                    BorderBrush="DarkGreen"
+                    BorderThickness="3,0,0,3"
+                    Content="{Binding GameState.Score.Win}"
+                    ToolTip="Угадано" />
+                <Label
+                    d:Content="2"
+                    BorderBrush="DarkRed"
+                    BorderThickness="3,0,0,3"
+                    Content="{Binding GameState.Score.Lose}"
+                    ToolTip="Не угадано" />
+                <Label
+                    d:Content="15"
+                    BorderBrush="Gray"
+                    BorderThickness="3,0,0,3"
+                    Content="{Binding GameState.Score.Total}"
+                    ToolTip="Осталось" />
+            </StackPanel>
+
+            <StackPanel
+                Grid.Column="2"
+                Margin="10"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <StackPanel.Resources>
+                    <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="Button">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="Width" Value="40" />
+                        <Setter Property="Height" Value="40" />
+                        <Setter Property="BorderThickness" Value="0" />
+                        <Setter Property="Margin" Value="1" />
+                    </Style>
+                </StackPanel.Resources>
+
+                <Button
+                    Width="32"
+                    Height="32"
+                    Padding="0"
+                    Command="{Binding ResetCommand}"
+                    ToolTip="Сбросить">
+                    <Image
+                        Width="28"
+                        Height="28"
+                        Source="{StaticResource ResetImage}" />
+                </Button>
+                <Button
+                    Width="32"
+                    Height="32"
+                    Padding="0"
+                    Command="{Binding OpenSettingsCommand}"
+                    ToolTip="Настройки">
+                    <Image
+                        Width="32"
+                        Height="32"
+                        Source="{StaticResource ConfigImage}" />
+                </Button>
+                <Button
+                    Width="32"
+                    Height="32"
+                    Padding="0"
+                    Command="{Binding OpenHelpCommand}"
+                    ToolTip="Правила">
+                    <Image
+                        Width="32"
+                        Height="32"
+                        Source="{StaticResource HelpImage}" />
+                </Button>
+
+            </StackPanel>
+        </Grid>
+
+        <ItemsControl
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            ItemsSource="{Binding GameState.Attempts}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <ItemsControl ItemsSource="{Binding Letters}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                                    Width="40"
+                                    Height="40"
+                                    Margin="10,5"
+                                    Padding="0"
+                                    BorderThickness="1"
+                                    CornerRadius="5">
+                                    <Border.Style>
+                                        <Style TargetType="{x:Type Border}">
+                                            <Setter Property="BorderBrush" Value="Yellow" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding DataContext.CellStyle, Converter={converters:CanClearBorderConverter}, RelativeSource={RelativeSource Mode=Self}}" Value="True">
+                                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+
+                                    <Label
+                                        Padding="0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        BorderThickness="0"
+                                        Content="{Binding SelectedLetter}"
+                                        FontSize="16"
+                                        FontWeight="Bold">
+                                        <Label.Style>
+                                            <Style BasedOn="{StaticResource {x:Type Label}}" TargetType="Label">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding DataContext.CellStyle, RelativeSource={RelativeSource Mode=Self}}" Value="{x:Static models:CellStyle.Wrong}">
+                                                        <Setter Property="Background" Value="Gray" />
+                                                        <Setter Property="Foreground" Value="White" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DataContext.CellStyle, RelativeSource={RelativeSource Mode=Self}}" Value="{x:Static models:CellStyle.Nearly}">
+                                                        <Setter Property="Background" Value="GhostWhite" />
+                                                        <Setter Property="Foreground" Value="#FF3D3D3D" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding DataContext.CellStyle, RelativeSource={RelativeSource Mode=Self}}" Value="{x:Static models:CellStyle.Guessed}">
+                                                        <Setter Property="Background" Value="#FFFFE700" />
+                                                        <Setter Property="Foreground" Value="Black" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Label.Style>
+                                    </Label>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+
+        </ItemsControl>
+
+        <StackPanel Grid.Row="2" IsEnabled="{Binding GameState.CanInput}">
+            <controls:CustomKeyboard
+                EnterButtonEnabled="{Binding GameState.CanEnter}"
+                LangMode="{Binding Settings.LangMode, Mode=OneWay}"
+                RemoveButtonEnabled="{Binding GameState.CanRemove}">
+                <hc:Interaction.Triggers>
+                    <hc:EventTrigger EventName="LetterClick">
+                        <hc:EventToCommand Command="{Binding LettersClickedCommand}" PassEventArgsToCommand="True" />
+                    </hc:EventTrigger>
+
+                    <hc:EventTrigger EventName="RemoveClick">
+                        <hc:EventToCommand Command="{Binding RemoveClickedCoommand}" />
+                    </hc:EventTrigger>
+
+                    <hc:EventTrigger EventName="EnterClick">
+                        <hc:EventToCommand Command="{Binding EnterClickedCommand}" />
+                    </hc:EventTrigger>
+                </hc:Interaction.Triggers>
+            </controls:CustomKeyboard>
+        </StackPanel>
+
+    </Grid>
+</hc:Window>
