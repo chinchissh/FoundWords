@@ -5,7 +5,7 @@
 /// </summary>
 public enum LetterStatus
 {
-    NotGuessed, // Не угадано (начальное состояние)
+    NotGuessed, // Не угадано
     Wrong,      // В слове нет такой буквы
     Nearly,     // Угадано, но неправильная позиция
     Guessed     // Унадано

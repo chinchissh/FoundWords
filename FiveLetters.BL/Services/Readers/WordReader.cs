@@ -15,9 +15,6 @@ public sealed class WordReader
         // Создать объект для проверки слов в соответствии с выбранным языком
         var wordChecker = WordCheckerFactory.CreateChecker(settings.LangMode);
 
-        // - Удалить пробелы в начале и в конце
-        // - Проверить буквы на вхождение в алфавит выбранного языка
-        // - Привести к верхнему регистру
         var processedWords = words
             .Select(x => x.Trim())
             .Where(x => wordChecker.CheckWord(x, settings.LettersCount))
